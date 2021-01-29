@@ -1,4 +1,6 @@
-module github.com/shogo82148/androidbinary
+module github.com/appflight/androidbinary
+
+go 1.15
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

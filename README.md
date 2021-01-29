@@ -1,8 +1,8 @@
 androidbinary
 =====
 
-[![Build Status](https://github.com/shogo82148/androidbinary/workflows/Test/badge.svg)](https://github.com/shogo82148/androidbinary/actions)
-[![GoDoc](https://godoc.org/github.com/shogo82148/androidbinary?status.svg)](https://godoc.org/github.com/shogo82148/androidbinary)
+[![Build Status](https://github.com/appflight/androidbinary/workflows/Test/badge.svg)](https://github.com/appflight/androidbinary/actions)
+[![GoDoc](https://godoc.org/github.com/appflight/androidbinary?status.svg)](https://godoc.org/github.com/appflight/androidbinary)
 
 Android binary file parser
 
@@ -14,7 +14,9 @@ Android binary file parser
 package main
 
 import (
-	"github.com/shogo82148/androidbinary/apk"
+	"fmt"
+	"github.com/appflight/androidbinary"
+	"github.com/appflight/androidbinary/apk"
 )
 
 func main() {
@@ -27,7 +29,9 @@ func main() {
 	resConfigEN := &androidbinary.ResTableConfig{
 		Language: [2]uint8{uint8('e'), uint8('n')},
 	}
-	appLabel, _ = pkg.Label(resConfigEN) // get app label for en translation
+	appLabel, _ := pkg.Label(resConfigEN) // get app label for en translation
+	
+	fmt.Println(icon, pkgName, appLabel)
 }
 ```
 
@@ -40,20 +44,24 @@ package main
 
 import (
 	"encoding/xml"
-
-	"github.com/shogo82148/androidbinary"
-	"github.com/shogo82148/androidbinary/apk"
+	"fmt"
+	"github.com/appflight/androidbinary"
+	"github.com/appflight/androidbinary/apk"
+	"io/ioutil"
+	"os"
 )
 
 func main() {
-	f, _ := os.Open("AndroidManifest.xml")
-	xml, _ := androidbinary.NewXMLFile(f)
-	reader := xml.Reader()
+	f, _ := os.Open("path to AndroidManifest.xml")
+	xmlFile, _ := androidbinary.NewXMLFile(f)
+	reader := xmlFile.Reader()
 
 	// read XML from reader
 	var manifest apk.Manifest
 	data, _ := ioutil.ReadAll(reader)
 	xml.Unmarshal(data, &manifest)
+	
+	fmt.Println(manifest)
 }
 ```
 
@@ -64,11 +72,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/shogo82148/androidbinary"
+	"github.com/appflight/androidbinary"
+	"os"
 )
 
 func main() {
-	f, _ := os.Open("resources.arsc")
+	f, _ := os.Open("path to resources.arsc")
 	rsc, _ := androidbinary.NewTableFile(f)
 	resource, _ := rsc.GetResource(androidbinary.ResID(0xCAFEBABE), nil)
 	fmt.Println(resource)
